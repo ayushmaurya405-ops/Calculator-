@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modern Calculator</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  font-family:Segoe UI, Arial, sans-serif;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+}
+
+.app{
+  width:330px;
+  background:#111827;
+  border-radius:16px;
+  padding:14px;
+  box-shadow:0 20px 40px rgba(0,0,0,.6);
+}
+
+.display{
+  width:100%;
+  height:60px;
+  padding:10px;
+  font-size:26px;
+  text-align:right;
+  border:none;
+  border-radius:10px;
+  background:#020617;
+  color:#38f9d7;
+  margin-bottom:12px;
+}
+
+.buttons{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+button{
+  height:52px;
+  border:none;
+  border-radius:12px;
+  font-size:18px;
+  background:#1f2937;
+  color:#fff;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+button:hover{ background:#374151; }
+button:active{ transform:scale(0.96); }
+
+.operator{ background:#f59e0b; color:#000; }
+.operator:hover{ background:#d97706; }
+
+.equal{ background:#22c55e; color:#000; }
+.equal:hover{ background:#16a34a; }
+
+.clear{ background:#ef4444; }
+.clear:hover{ background:#dc2626; }
+
+.remove{ background:#6366f1; }
+.remove:hover{ background:#4f46e5; }
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<input type="text" id="display" class="display" value="0" disabled>
+
+<div class="buttons">
+  <button class="clear" onclick="clearDisplay()">C</button>
+  <button class="remove" onclick="removeLast()">⌫</button>
+  <button class="operator" onclick="append('%')">%</button>
+  <button class="operator" onclick="append('/')">÷</button>
+
+  <button onclick="append('7')">7</button>
+  <button onclick="append('8')">8</button>
+  <button onclick="append('9')">9</button>
+  <button class="operator" onclick="append('*')">×</button>
+
+  <button onclick="append('4')">4</button>
+  <button onclick="append('5')">5</button>
+  <button onclick="append('6')">6</button>
+  <button class="operator" onclick="append('-')">−</button>
+
+  <button onclick="append('1')">1</button>
+  <button onclick="append('2')">2</button>
+  <button onclick="append('3')">3</button>
+  <button class="operator" onclick="append('+')">+</button>
+
+  <button onclick="append('0')" style="grid-column:span 2;">0</button>
+  <button onclick="append('.')">.</button>
+  <button class="equal" onclick="calculate()">=</button>
+</div>
+
+</div>
+
+<script>
+const display = document.getElementById("display");
+const operators = ["+","-","*","/","%"];
+
+function append(val){
+  let cur = display.value;
+
+  if(cur === "0" && !operators.includes(val)){
+    display.value = val;
+    return;
+  }
+
+  if(operators.includes(val) && operators.includes(cur.slice(-1))){
+    return;
+  }
+
+  if(val === "." && cur.split(/[\+\-\*\/]/).pop().includes(".")){
+    return;
+  }
+
+  display.value += val;
+}
+
+function clearDisplay(){
+  display.value = "0";
+}
+
+function removeLast(){
+  if(display.value.length <= 1){
+    display.value = "0";
+  }else{
+    display.value = display.value.slice(0,-1);
+  }
+}
+
+function calculate(){
+  try{
+    let exp = display.value.replace(/%/g,"/100");
+    display.value = Function("return " + exp)();
+  }catch{
+    display.value = "Error";
+  }
+}
+</script>
+
+</body>
+</html>
